@@ -26,7 +26,6 @@ export function AppSidebar({
   onOpenAdmin,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
-  const [showPrograms, setShowPrograms] = useState(true);
 
   if (collapsed) {
     return (

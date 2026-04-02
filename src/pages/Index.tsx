@@ -58,6 +58,7 @@ export default function Index() {
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };
+      localStorage.setItem("learnai_last_program", program.id);
       saveSession(session);
       refreshSessions();
       setActiveSessionId(session.id);
