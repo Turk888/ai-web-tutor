@@ -21,6 +21,33 @@ export default function Index() {
 
   const refreshSessions = () => setSessions(getSessions());
 
+  // Auto-select last used program on mount
+  useEffect(() => {
+    const lastProgramId = localStorage.getItem("learnai_last_program");
+    if (lastProgramId && !activeSessionId) {
+      const program = settings.programs.find((p) => p.id === lastProgramId);
+      if (program) {
+        // Find existing session for this program or create one
+        const existing = sessions.find((s) => s.programId === lastProgramId);
+        if (existing) {
+          setActiveSessionId(existing.id);
+        } else {
+          const session: ChatSession = {
+            id: generateId(),
+            programId: program.id,
+            title: program.title,
+            messages: [{ role: "system", content: program.systemPrompt }],
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+          };
+          saveSession(session);
+          refreshSessions();
+          setActiveSessionId(session.id);
+        }
+      }
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   const createSession = useCallback(
     (program: Program): ChatSession => {
       const session: ChatSession = {

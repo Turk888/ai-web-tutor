@@ -133,8 +133,25 @@ export function AppSidebar({
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="p-2 border-t border-sidebar-border-color">
+      {/* Programs & Footer */}
+      <div className="p-2 border-t border-sidebar-border-color space-y-0.5">
+        <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium px-2">
+          Programs
+        </span>
+        {programs.map((p) => (
+          <button
+            key={p.id}
+            onClick={() => onSelectProgram(p)}
+            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 ${
+              activeProgramId === p.id
+                ? "bg-sidebar-hover text-foreground"
+                : "text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground"
+            }`}
+          >
+            <span>{p.icon || "📚"}</span>
+            <span className="truncate">{p.title}</span>
+          </button>
+        ))}
         <button
           onClick={onOpenAdmin}
           className="w-full text-left px-3 py-2 rounded-lg text-sm text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground transition-colors flex items-center gap-2"
