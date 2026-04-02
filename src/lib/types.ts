@@ -5,6 +5,7 @@ export interface Program {
   systemPrompt: string;
   model: string;
   icon?: string;
+  suggestedQuestions?: string[];
 }
 
 export interface ChatMessage {

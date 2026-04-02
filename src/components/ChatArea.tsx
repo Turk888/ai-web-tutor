@@ -3,6 +3,7 @@ import { ChatMessage } from "./ChatMessage";
 import { ChatInput } from "./ChatInput";
 import { TypingIndicator } from "./TypingIndicator";
 import { WelcomeScreen } from "./WelcomeScreen";
+import { MessageSquareText } from "lucide-react";
 import type { ChatSession, Program, ChatMessage as Msg } from "@/lib/types";
 
 interface Props {
@@ -30,6 +31,8 @@ export function ChatArea({ session, programs, isStreaming, onSend, onSelectProgr
 
   const visibleMessages = session.messages.filter((m) => m.role !== "system");
   const currentProgram = programs.find((p) => p.id === session.programId);
+  const suggestedQuestions = currentProgram?.suggestedQuestions || [];
+  const showSuggestions = visibleMessages.length === 0 && suggestedQuestions.length > 0;
 
   return (
     <div className="flex-1 flex flex-col min-h-0">
@@ -46,9 +49,31 @@ export function ChatArea({ session, programs, isStreaming, onSend, onSelectProgr
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
-        {visibleMessages.length === 0 && (
+        {visibleMessages.length === 0 && !showSuggestions && (
           <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
             Start your conversation below 👇
+          </div>
+        )}
+        {showSuggestions && (
+          <div className="flex items-center justify-center h-full p-6">
+            <div className="max-w-2xl w-full">
+              <div className="text-center mb-6">
+                <MessageSquareText className="w-8 h-8 text-primary mx-auto mb-2" />
+                <h3 className="text-lg font-semibold text-foreground">How can I help you today?</h3>
+                <p className="text-sm text-muted-foreground">Pick a question or type your own below</p>
+              </div>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {suggestedQuestions.map((q, i) => (
+                  <button
+                    key={i}
+                    onClick={() => onSend(q)}
+                    className="text-left px-4 py-3 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-primary/5 transition-all text-sm text-foreground"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
         {visibleMessages.map((msg, i) => (

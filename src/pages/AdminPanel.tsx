@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Plus, Save, Trash2, Lock } from "lucide-react";
+import { ArrowLeft, Plus, Save, Trash2, Lock, Sparkles, X, Loader2 } from "lucide-react";
 import { getSettings, saveSettings } from "@/lib/storage";
 import { GROQ_MODELS, type AppSettings, type Program } from "@/lib/types";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const ADMIN_PASSWORD = "Nehmat@Turk";
 
@@ -14,6 +16,8 @@ export default function AdminPanel() {
   const [settings, setSettings] = useState<AppSettings>(getSettings());
   const [editingProgram, setEditingProgram] = useState<Program | null>(null);
   const [saved, setSaved] = useState(false);
+  const [newQuestion, setNewQuestion] = useState("");
+  const [generating, setGenerating] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +43,7 @@ export default function AdminPanel() {
       systemPrompt: "You are a helpful tutor.",
       model: settings.defaultModel,
       icon: "📚",
+      suggestedQuestions: [],
     };
     setSettings({ ...settings, programs: [...settings.programs, newProgram] });
     setEditingProgram(newProgram);
@@ -58,6 +63,43 @@ export default function AdminPanel() {
       programs: settings.programs.filter((p) => p.id !== id),
     });
     if (editingProgram?.id === id) setEditingProgram(null);
+  };
+
+  const addQuestion = () => {
+    if (!editingProgram || !newQuestion.trim()) return;
+    const questions = [...(editingProgram.suggestedQuestions || []), newQuestion.trim()];
+    updateProgram({ ...editingProgram, suggestedQuestions: questions });
+    setNewQuestion("");
+  };
+
+  const removeQuestion = (index: number) => {
+    if (!editingProgram) return;
+    const questions = (editingProgram.suggestedQuestions || []).filter((_, i) => i !== index);
+    updateProgram({ ...editingProgram, suggestedQuestions: questions });
+  };
+
+  const generateQuestions = async () => {
+    if (!editingProgram) return;
+    setGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("generate-questions", {
+        body: {
+          title: editingProgram.title,
+          description: editingProgram.description,
+          systemPrompt: editingProgram.systemPrompt,
+        },
+      });
+      if (error) throw error;
+      if (data?.questions) {
+        updateProgram({ ...editingProgram, suggestedQuestions: data.questions });
+        toast.success("Questions generated!");
+      }
+    } catch (err) {
+      toast.error("Failed to generate questions");
+      console.error(err);
+    } finally {
+      setGenerating(false);
+    }
   };
 
   if (!authenticated) {
@@ -211,9 +253,55 @@ export default function AdminPanel() {
                 <textarea
                   value={editingProgram.systemPrompt}
                   onChange={(e) => updateProgram({ ...editingProgram, systemPrompt: e.target.value })}
-                  rows={8}
+                  rows={6}
                   className="w-full px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none resize-y"
                 />
+              </div>
+
+              {/* Suggested Questions */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs text-muted-foreground">Suggested Questions</label>
+                  <button
+                    onClick={generateQuestions}
+                    disabled={generating}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20 transition-colors disabled:opacity-50"
+                  >
+                    {generating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                    {generating ? "Generating..." : "AI Generate"}
+                  </button>
+                </div>
+
+                <div className="space-y-1.5 mb-2">
+                  {(editingProgram.suggestedQuestions || []).map((q, i) => (
+                    <div key={i} className="flex items-center gap-2 group">
+                      <span className="flex-1 text-sm text-foreground bg-secondary px-3 py-2 rounded-lg">{q}</span>
+                      <button
+                        onClick={() => removeQuestion(i)}
+                        className="p-1 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="flex gap-2">
+                  <input
+                    value={newQuestion}
+                    onChange={(e) => setNewQuestion(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && addQuestion()}
+                    placeholder="Add a question..."
+                    className="flex-1 px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none"
+                  />
+                  <button
+                    onClick={addQuestion}
+                    disabled={!newQuestion.trim()}
+                    className="px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
