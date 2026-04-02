@@ -4,7 +4,7 @@ import { ArrowLeft, Plus, Save, Trash2, Lock } from "lucide-react";
 import { getSettings, saveSettings } from "@/lib/storage";
 import { GROQ_MODELS, type AppSettings, type Program } from "@/lib/types";
 
-const ADMIN_PASSWORD = "Nehmat@Truk";
+const ADMIN_PASSWORD = "Nehmat@Turk";
 
 export default function AdminPanel() {
   const navigate = useNavigate();
