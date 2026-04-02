@@ -14,9 +14,10 @@ export function WelcomeScreen({ programs, onSelectProgram }: Props) {
           <Zap className="w-4 h-4" />
           AI-Powered Learning
         </div>
-        <h2 className="text-3xl font-bold text-foreground mb-3">
-          Learn to Build Websites
+        <h2 className="text-3xl font-bold text-foreground mb-1">
+          Corvit Educator
         </h2>
+        <p className="text-xs text-muted-foreground mb-4">by Nehmat Ullah Khan</p>
         <p className="text-muted-foreground mb-8 max-w-md mx-auto">
           Choose a program below and start an interactive AI-guided course. Ask questions, get code examples, and learn at your own pace.
         </p>
