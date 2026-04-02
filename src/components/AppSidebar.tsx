@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Plus, MessageSquare, Trash2, BookOpen, Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import { Plus, MessageSquare, Trash2, BookOpen, Settings, ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import type { Program, ChatSession } from "@/lib/types";
 
 interface Props {
@@ -26,6 +27,12 @@ export function AppSidebar({
   onOpenAdmin,
 }: Props) {
   const [collapsed, setCollapsed] = useState(false);
+  const [programsOpen, setProgramsOpen] = useState(false);
+
+  const handleSelectProgram = (p: Program) => {
+    onSelectProgram(p);
+    setProgramsOpen(false);
+  };
 
   if (collapsed) {
     return (
@@ -37,6 +44,37 @@ export function AppSidebar({
           <Plus className="w-4 h-4" />
         </button>
         <div className="flex-1" />
+        <Dialog open={programsOpen} onOpenChange={setProgramsOpen}>
+          <DialogTrigger asChild>
+            <button className="p-2 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors">
+              <GraduationCap className="w-4 h-4" />
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Select a Program</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-1 mt-2">
+              {programs.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => handleSelectProgram(p)}
+                  className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-colors flex items-center gap-3 ${
+                    activeProgramId === p.id
+                      ? "bg-primary/10 text-primary border border-primary/20"
+                      : "hover:bg-secondary text-foreground border border-transparent"
+                  }`}
+                >
+                  <span className="text-xl">{p.icon || "📚"}</span>
+                  <div>
+                    <div className="font-medium">{p.title}</div>
+                    <div className="text-xs text-muted-foreground">{p.description}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
         <button onClick={onOpenAdmin} className="p-2 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors">
           <Settings className="w-4 h-4" />
         </button>
@@ -104,25 +142,40 @@ export function AppSidebar({
         </div>
       </div>
 
-      {/* Programs & Footer */}
+      {/* Footer */}
       <div className="p-2 border-t border-sidebar-border-color space-y-0.5">
-        <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium px-2">
-          Programs
-        </span>
-        {programs.map((p) => (
-          <button
-            key={p.id}
-            onClick={() => onSelectProgram(p)}
-            className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 ${
-              activeProgramId === p.id
-                ? "bg-sidebar-hover text-foreground"
-                : "text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground"
-            }`}
-          >
-            <span>{p.icon || "📚"}</span>
-            <span className="truncate">{p.title}</span>
-          </button>
-        ))}
+        <Dialog open={programsOpen} onOpenChange={setProgramsOpen}>
+          <DialogTrigger asChild>
+            <button className="w-full text-left px-3 py-2 rounded-lg text-sm text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground transition-colors flex items-center gap-2">
+              <GraduationCap className="w-4 h-4" />
+              Programs
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle>Select a Program</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-1 mt-2">
+              {programs.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => handleSelectProgram(p)}
+                  className={`w-full text-left px-4 py-3 rounded-lg text-sm transition-colors flex items-center gap-3 ${
+                    activeProgramId === p.id
+                      ? "bg-primary/10 text-primary border border-primary/20"
+                      : "hover:bg-secondary text-foreground border border-transparent"
+                  }`}
+                >
+                  <span className="text-xl">{p.icon || "📚"}</span>
+                  <div>
+                    <div className="font-medium">{p.title}</div>
+                    <div className="text-xs text-muted-foreground">{p.description}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
         <button
           onClick={onOpenAdmin}
           className="w-full text-left px-3 py-2 rounded-lg text-sm text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground transition-colors flex items-center gap-2"
