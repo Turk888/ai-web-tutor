@@ -99,6 +99,7 @@ export default function Index() {
       streamChat({
         messages: updatedMessages,
         model: program?.model || settings.defaultModel,
+        provider: settings.apiProvider,
         onDelta: (chunk) => {
           assistantContent += chunk;
           const withAssistant: ChatSession = {

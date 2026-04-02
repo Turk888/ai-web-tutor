@@ -1,22 +1,27 @@
-import type { ChatMessage } from "./types";
+import type { ChatMessage, ApiProvider } from "./types";
 
-const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/groq-chat`;
+const GROQ_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/groq-chat`;
+const LOVABLE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/lovable-chat`;
 
 export async function streamChat({
   messages,
   model,
+  provider,
   onDelta,
   onDone,
   onError,
 }: {
   messages: ChatMessage[];
   model: string;
+  provider: ApiProvider;
   onDelta: (text: string) => void;
   onDone: () => void;
   onError: (err: string) => void;
 }) {
+  const url = provider === "lovable" ? LOVABLE_URL : GROQ_URL;
+
   try {
-    const resp = await fetch(CHAT_URL, {
+    const resp = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

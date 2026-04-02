@@ -1,3 +1,5 @@
+export type ApiProvider = "groq" | "lovable";
+
 export interface Program {
   id: string;
   title: string;
@@ -25,6 +27,7 @@ export interface ChatSession {
 export interface AppSettings {
   defaultModel: string;
   programs: Program[];
+  apiProvider: ApiProvider;
 }
 
 export const GROQ_MODELS = [
@@ -34,6 +37,20 @@ export const GROQ_MODELS = [
   { id: "llama3-8b-8192", name: "Llama 3 8B" },
   { id: "mixtral-8x7b-32768", name: "Mixtral 8x7B" },
   { id: "gemma2-9b-it", name: "Gemma 2 9B" },
+] as const;
+
+export const LOVABLE_MODELS = [
+  { id: "google/gemini-3-flash-preview", name: "Gemini 3 Flash (Fast)" },
+  { id: "google/gemini-2.5-flash", name: "Gemini 2.5 Flash" },
+  { id: "google/gemini-2.5-pro", name: "Gemini 2.5 Pro" },
+  { id: "openai/gpt-5-mini", name: "GPT-5 Mini" },
+  { id: "openai/gpt-5", name: "GPT-5" },
+  { id: "openai/gpt-5-nano", name: "GPT-5 Nano (Fast)" },
+] as const;
+
+export const API_PROVIDERS = [
+  { id: "groq" as ApiProvider, name: "Groq (Llama/Mixtral)", description: "Fast open-source models" },
+  { id: "lovable" as ApiProvider, name: "Lovable AI (Gemini/GPT)", description: "Premium AI models" },
 ] as const;
 
 export const DEFAULT_PROGRAMS: Program[] = [

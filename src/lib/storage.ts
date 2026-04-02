@@ -11,6 +11,7 @@ export function getSettings(): AppSettings {
   const defaults: AppSettings = {
     defaultModel: "llama-3.3-70b-versatile",
     programs: DEFAULT_PROGRAMS,
+    apiProvider: "groq",
   };
   saveSettings(defaults);
   return defaults;
