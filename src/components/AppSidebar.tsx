@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Plus, MessageSquare, Trash2, BookOpen, Settings, ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
+import { Plus, MessageSquare, Trash2, BookOpen, Settings, ChevronLeft, GraduationCap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ThemeToggle } from "./ThemeToggle";
 import type { Program, ChatSession } from "@/lib/types";
 
 interface Props {
@@ -83,21 +84,21 @@ export function AppSidebar({
   }
 
   return (
-    <div className="w-72 bg-sidebar-bg border-r border-sidebar-border-color flex flex-col shrink-0">
+    <div className="w-72 md:w-72 bg-sidebar-bg border-r border-sidebar-border-color flex flex-col shrink-0 h-full overflow-hidden">
       {/* Header */}
       <div className="p-3 flex items-center justify-between border-b border-sidebar-border-color">
-        <div className="flex items-center gap-2">
-          <BookOpen className="w-4 h-4 text-primary" />
-          <div>
-            <h1 className="text-sm font-semibold text-foreground leading-tight">Corvit Educator</h1>
-            <p className="text-[9px] text-muted-foreground leading-tight">by Nehmat Ullah Khan</p>
+        <div className="flex items-center gap-2 min-w-0">
+          <BookOpen className="w-4 h-4 text-primary flex-shrink-0" />
+          <div className="min-w-0">
+            <h1 className="text-sm font-semibold text-foreground leading-tight truncate">Corvit Educator</h1>
+            <p className="text-[9px] text-muted-foreground leading-tight truncate">by Nehmat Ullah Khan</p>
           </div>
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 flex-shrink-0">
           <button onClick={onNewChat} className="p-1.5 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors" title="New chat">
             <Plus className="w-4 h-4" />
           </button>
-          <button onClick={() => setCollapsed(true)} className="p-1.5 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors">
+          <button onClick={() => setCollapsed(true)} className="p-1.5 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors md:hidden">
             <ChevronLeft className="w-4 h-4" />
           </button>
         </div>
@@ -123,7 +124,7 @@ export function AppSidebar({
             >
               <button
                 onClick={() => onSelectSession(s)}
-                className="flex-1 text-left px-3 py-2 text-sm truncate flex items-center gap-2"
+                className="flex-1 text-left px-3 py-2 text-sm truncate flex items-center gap-2 min-w-0"
               >
                 <MessageSquare className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">{s.title}</span>
@@ -133,7 +134,7 @@ export function AppSidebar({
                   e.stopPropagation();
                   onDeleteSession(s.id);
                 }}
-                className="p-1.5 mr-1 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all"
+                className="p-1.5 mr-1 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all flex-shrink-0"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
@@ -143,7 +144,7 @@ export function AppSidebar({
       </div>
 
       {/* Footer */}
-      <div className="p-2 border-t border-sidebar-border-color space-y-0.5">
+      <div className="p-2 border-t border-sidebar-border-color space-y-0.5 flex-shrink-0">
         <Dialog open={programsOpen} onOpenChange={setProgramsOpen}>
           <DialogTrigger asChild>
             <button className="w-full text-left px-3 py-2 rounded-lg text-sm text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground transition-colors flex items-center gap-2">
@@ -176,13 +177,16 @@ export function AppSidebar({
             </div>
           </DialogContent>
         </Dialog>
-        <button
-          onClick={onOpenAdmin}
-          className="w-full text-left px-3 py-2 rounded-lg text-sm text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground transition-colors flex items-center gap-2"
-        >
-          <Settings className="w-4 h-4" />
-          Admin Panel
-        </button>
+        <div className="flex items-center gap-2 px-1">
+          <button
+            onClick={onOpenAdmin}
+            className="flex-1 text-left px-3 py-2 rounded-lg text-sm text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground transition-colors flex items-center gap-2"
+          >
+            <Settings className="w-4 h-4" />
+            Admin Panel
+          </button>
+          <ThemeToggle />
+        </div>
       </div>
     </div>
   );

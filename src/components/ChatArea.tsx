@@ -37,7 +37,7 @@ export function ChatArea({ session, programs, isStreaming, onSend, onSelectProgr
   return (
     <div className="flex-1 flex flex-col min-h-0">
       {/* Header */}
-      <div className="border-b border-border px-4 py-3 bg-background/80 backdrop-blur-sm">
+      <div className="border-b border-border px-3 md:px-4 py-2 md:py-3 bg-background/80 backdrop-blur-sm hidden md:block">
         <div className="max-w-3xl mx-auto flex items-center gap-2">
           <span className="text-lg">{currentProgram?.icon || "📚"}</span>
           <div>
@@ -50,12 +50,12 @@ export function ChatArea({ session, programs, isStreaming, onSend, onSelectProgr
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
         {visibleMessages.length === 0 && !showSuggestions && (
-          <div className="flex items-center justify-center h-full text-muted-foreground text-sm">
+          <div className="flex items-center justify-center h-full text-muted-foreground text-sm px-4">
             Start your conversation below 👇
           </div>
         )}
         {showSuggestions && (
-          <div className="flex items-center justify-center h-full p-6">
+          <div className="flex items-center justify-center h-full p-4 md:p-6">
             <div className="max-w-2xl w-full">
               <div className="text-center mb-6">
                 <MessageSquareText className="w-8 h-8 text-primary mx-auto mb-2" />
@@ -85,12 +85,14 @@ export function ChatArea({ session, programs, isStreaming, onSend, onSelectProgr
         <div ref={bottomRef} />
       </div>
 
-      {/* Input */}
-      <ChatInput
-        onSend={onSend}
-        disabled={isStreaming}
-        placeholder={`Ask about ${currentProgram?.title || "this topic"}...`}
-      />
+      {/* Input - Positioned at bottom with safe area padding for mobile */}
+      <div className="border-t border-border bg-background px-2 md:px-4 py-3 md:py-4 safe-area-inset-bottom">
+        <ChatInput
+          onSend={onSend}
+          disabled={isStreaming}
+          placeholder={`Ask about ${currentProgram?.title || "this topic"}...`}
+        />
+      </div>
     </div>
   );
 }

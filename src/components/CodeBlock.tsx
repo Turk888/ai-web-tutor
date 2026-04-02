@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Check, Copy } from "lucide-react";
 
 interface CodeBlockProps {
@@ -10,6 +11,10 @@ interface CodeBlockProps {
 
 export function CodeBlock({ language, children }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
+
+  const isDarkTheme = useMemo(() => {
+    return !document.documentElement.classList.contains('light');
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(children);
@@ -42,11 +47,11 @@ export function CodeBlock({ language, children }: CodeBlockProps) {
       </div>
       <SyntaxHighlighter
         language={language || "text"}
-        style={oneDark}
+        style={isDarkTheme ? oneDark : oneLight}
         customStyle={{
           margin: 0,
           borderRadius: 0,
-          background: "hsl(220, 15%, 6%)",
+          background: isDarkTheme ? "hsl(220, 15%, 6%)" : "hsl(220, 13%, 93%)",
           fontSize: "0.85rem",
           padding: "1rem",
         }}

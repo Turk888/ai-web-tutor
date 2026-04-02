@@ -33,8 +33,8 @@ export function ChatInput({ onSend, disabled, placeholder }: Props) {
   };
 
   return (
-    <div className="border-t border-border bg-background p-4">
-      <div className="max-w-3xl mx-auto">
+    <div className="w-full">
+      <div className="max-w-3xl mx-auto px-0 md:px-4">
         <div className="relative flex items-end bg-secondary rounded-xl border border-border focus-within:border-primary/50 transition-colors">
           <textarea
             ref={textareaRef}
@@ -49,7 +49,7 @@ export function ChatInput({ onSend, disabled, placeholder }: Props) {
           <button
             onClick={handleSend}
             disabled={disabled || !input.trim()}
-            className="p-2 m-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            className="p-2 m-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-30 disabled:cursor-not-allowed transition-all flex-shrink-0"
           >
             <Send className="w-4 h-4" />
           </button>
@@ -59,5 +59,6 @@ export function ChatInput({ onSend, disabled, placeholder }: Props) {
         </p>
       </div>
     </div>
+  );
   );
 }
