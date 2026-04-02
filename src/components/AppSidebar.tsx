@@ -66,36 +66,8 @@ export function AppSidebar({
         </div>
       </div>
 
-      {/* Programs */}
-      <div className="px-2 pt-3">
-        <button
-          onClick={() => setShowPrograms(!showPrograms)}
-          className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium px-2 mb-1 hover:text-foreground transition-colors"
-        >
-          Programs
-        </button>
-        {showPrograms && (
-          <div className="space-y-0.5">
-            {programs.map((p) => (
-              <button
-                key={p.id}
-                onClick={() => onSelectProgram(p)}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 ${
-                  activeProgramId === p.id
-                    ? "bg-sidebar-hover text-foreground"
-                    : "text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground"
-                }`}
-              >
-                <span>{p.icon || "📚"}</span>
-                <span className="truncate">{p.title}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Chat History */}
-      <div className="px-2 pt-4 flex-1 overflow-y-auto">
+      <div className="px-2 pt-3 flex-1 overflow-y-auto">
         <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium px-2">
           Recent Chats
         </span>
