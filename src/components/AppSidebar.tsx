@@ -1,0 +1,145 @@
+import { useState } from "react";
+import { Plus, MessageSquare, Trash2, BookOpen, Settings, ChevronLeft, ChevronRight } from "lucide-react";
+import type { Program, ChatSession } from "@/lib/types";
+
+interface Props {
+  programs: Program[];
+  sessions: ChatSession[];
+  activeSessionId: string | null;
+  activeProgramId: string | null;
+  onSelectProgram: (program: Program) => void;
+  onSelectSession: (session: ChatSession) => void;
+  onNewChat: () => void;
+  onDeleteSession: (id: string) => void;
+  onOpenAdmin: () => void;
+}
+
+export function AppSidebar({
+  programs,
+  sessions,
+  activeSessionId,
+  activeProgramId,
+  onSelectProgram,
+  onSelectSession,
+  onNewChat,
+  onDeleteSession,
+  onOpenAdmin,
+}: Props) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [showPrograms, setShowPrograms] = useState(true);
+
+  if (collapsed) {
+    return (
+      <div className="w-14 bg-sidebar-bg border-r border-sidebar-border-color flex flex-col items-center py-3 gap-2 shrink-0">
+        <button onClick={() => setCollapsed(false)} className="p-2 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors">
+          <ChevronRight className="w-4 h-4" />
+        </button>
+        <button onClick={onNewChat} className="p-2 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors">
+          <Plus className="w-4 h-4" />
+        </button>
+        <div className="flex-1" />
+        <button onClick={onOpenAdmin} className="p-2 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors">
+          <Settings className="w-4 h-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-72 bg-sidebar-bg border-r border-sidebar-border-color flex flex-col shrink-0">
+      {/* Header */}
+      <div className="p-3 flex items-center justify-between border-b border-sidebar-border-color">
+        <h1 className="text-sm font-semibold text-foreground flex items-center gap-2">
+          <BookOpen className="w-4 h-4 text-primary" />
+          LearnAI
+        </h1>
+        <div className="flex gap-1">
+          <button onClick={onNewChat} className="p-1.5 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors" title="New chat">
+            <Plus className="w-4 h-4" />
+          </button>
+          <button onClick={() => setCollapsed(true)} className="p-1.5 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors">
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      {/* Programs */}
+      <div className="px-2 pt-3">
+        <button
+          onClick={() => setShowPrograms(!showPrograms)}
+          className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium px-2 mb-1 hover:text-foreground transition-colors"
+        >
+          Programs
+        </button>
+        {showPrograms && (
+          <div className="space-y-0.5">
+            {programs.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => onSelectProgram(p)}
+                className={`w-full text-left px-3 py-2 rounded-lg text-sm transition-colors flex items-center gap-2 ${
+                  activeProgramId === p.id
+                    ? "bg-sidebar-hover text-foreground"
+                    : "text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground"
+                }`}
+              >
+                <span>{p.icon || "📚"}</span>
+                <span className="truncate">{p.title}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Chat History */}
+      <div className="px-2 pt-4 flex-1 overflow-y-auto">
+        <span className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium px-2">
+          Recent Chats
+        </span>
+        <div className="space-y-0.5 mt-1">
+          {sessions.length === 0 && (
+            <p className="text-xs text-muted-foreground px-3 py-2">No chats yet</p>
+          )}
+          {sessions.map((s) => (
+            <div
+              key={s.id}
+              className={`group flex items-center rounded-lg transition-colors ${
+                activeSessionId === s.id
+                  ? "bg-sidebar-hover text-foreground"
+                  : "text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground"
+              }`}
+            >
+              <button
+                onClick={() => onSelectSession(s)}
+                className="flex-1 text-left px-3 py-2 text-sm truncate flex items-center gap-2"
+              >
+                <MessageSquare className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{s.title}</span>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteSession(s.id);
+                }}
+                className="p-1.5 mr-1 opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive transition-all"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div className="p-2 border-t border-sidebar-border-color">
+        <button
+          onClick={onOpenAdmin}
+          className="w-full text-left px-3 py-2 rounded-lg text-sm text-sidebar-fg hover:bg-sidebar-hover hover:text-foreground transition-colors flex items-center gap-2"
+        >
+          <Settings className="w-4 h-4" />
+          Admin Panel
+        </button>
+      </div>
+    </div>
+  );
+}
