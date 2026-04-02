@@ -49,10 +49,13 @@ export function AppSidebar({
     <div className="w-72 bg-sidebar-bg border-r border-sidebar-border-color flex flex-col shrink-0">
       {/* Header */}
       <div className="p-3 flex items-center justify-between border-b border-sidebar-border-color">
-        <h1 className="text-sm font-semibold text-foreground flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <BookOpen className="w-4 h-4 text-primary" />
-          LearnAI
-        </h1>
+          <div>
+            <h1 className="text-sm font-semibold text-foreground leading-tight">Corvit Educator</h1>
+            <p className="text-[9px] text-muted-foreground leading-tight">by Nehmat Ullah Khan</p>
+          </div>
+        </div>
         <div className="flex gap-1">
           <button onClick={onNewChat} className="p-1.5 rounded-lg hover:bg-sidebar-hover text-sidebar-fg transition-colors" title="New chat">
             <Plus className="w-4 h-4" />
