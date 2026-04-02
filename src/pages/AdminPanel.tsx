@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Plus, Save, Trash2, Lock, Sparkles, X, Loader2 } from "lucide-react";
 import { getSettings, saveSettings } from "@/lib/storage";
-import { GROQ_MODELS, type AppSettings, type Program } from "@/lib/types";
+import { GROQ_MODELS, LOVABLE_MODELS, API_PROVIDERS, type AppSettings, type Program, type ApiProvider } from "@/lib/types";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -19,6 +19,8 @@ export default function AdminPanel() {
   const [newQuestion, setNewQuestion] = useState("");
   const [generating, setGenerating] = useState(false);
 
+  const currentModels = settings.apiProvider === "lovable" ? LOVABLE_MODELS : GROQ_MODELS;
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (password === ADMIN_PASSWORD) {
@@ -33,6 +35,17 @@ export default function AdminPanel() {
     saveSettings(settings);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleProviderChange = (provider: ApiProvider) => {
+    const models = provider === "lovable" ? LOVABLE_MODELS : GROQ_MODELS;
+    const newDefault = models[0].id;
+    // Update all programs to use the first model of the new provider
+    const updatedPrograms = settings.programs.map((p) => ({ ...p, model: models[0].id }));
+    setSettings({ ...settings, apiProvider: provider, defaultModel: newDefault, programs: updatedPrograms });
+    if (editingProgram) {
+      setEditingProgram({ ...editingProgram, model: models[0].id });
+    }
   };
 
   const addProgram = () => {
@@ -154,6 +167,27 @@ export default function AdminPanel() {
       <div className="max-w-5xl mx-auto p-6 grid gap-6 lg:grid-cols-[300px_1fr]">
         {/* Settings + Program List */}
         <div className="space-y-6">
+          {/* API Provider */}
+          <div className="p-4 rounded-xl bg-card border border-border">
+            <h3 className="text-sm font-semibold text-foreground mb-3">API Provider</h3>
+            <div className="space-y-2">
+              {API_PROVIDERS.map((p) => (
+                <button
+                  key={p.id}
+                  onClick={() => handleProviderChange(p.id)}
+                  className={`w-full text-left px-3 py-2.5 rounded-lg border text-sm transition-colors ${
+                    settings.apiProvider === p.id
+                      ? "border-primary bg-primary/10 text-foreground"
+                      : "border-border bg-secondary text-muted-foreground hover:text-foreground hover:border-primary/30"
+                  }`}
+                >
+                  <div className="font-medium">{p.name}</div>
+                  <div className="text-xs opacity-70">{p.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Default Model */}
           <div className="p-4 rounded-xl bg-card border border-border">
             <h3 className="text-sm font-semibold text-foreground mb-3">Default AI Model</h3>
@@ -162,7 +196,7 @@ export default function AdminPanel() {
               onChange={(e) => setSettings({ ...settings, defaultModel: e.target.value })}
               className="w-full px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none"
             >
-              {GROQ_MODELS.map((m) => (
+              {currentModels.map((m) => (
                 <option key={m.id} value={m.id}>{m.name}</option>
               ))}
             </select>
@@ -242,7 +276,7 @@ export default function AdminPanel() {
                   onChange={(e) => updateProgram({ ...editingProgram, model: e.target.value })}
                   className="w-full px-3 py-2 rounded-lg bg-secondary border border-border text-foreground text-sm focus:outline-none"
                 >
-                  {GROQ_MODELS.map((m) => (
+                  {currentModels.map((m) => (
                     <option key={m.id} value={m.id}>{m.name}</option>
                   ))}
                 </select>
