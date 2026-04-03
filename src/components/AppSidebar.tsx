@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, MessageSquare, Trash2, BookOpen, Settings, ChevronLeft, GraduationCap } from "lucide-react";
+import { Plus, MessageSquare, Trash2, BookOpen, Settings, ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ThemeToggle } from "./ThemeToggle";
 import type { Program, ChatSession } from "@/lib/types";

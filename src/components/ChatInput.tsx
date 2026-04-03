@@ -60,5 +60,4 @@ export function ChatInput({ onSend, disabled, placeholder }: Props) {
       </div>
     </div>
   );
-  );
 }
