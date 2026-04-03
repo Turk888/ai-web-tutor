@@ -23,7 +23,7 @@ export function ChatArea({ session, programs, isStreaming, onSend, onSelectProgr
 
   if (!session) {
     return (
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-0">
         <WelcomeScreen programs={programs} onSelectProgram={onSelectProgram} />
       </div>
     );
@@ -35,9 +35,9 @@ export function ChatArea({ session, programs, isStreaming, onSend, onSelectProgr
   const showSuggestions = visibleMessages.length === 0 && suggestedQuestions.length > 0;
 
   return (
-    <div className="flex-1 flex flex-col min-h-0">
-      {/* Header */}
-      <div className="border-b border-border px-3 md:px-4 py-2 md:py-3 bg-background/80 backdrop-blur-sm hidden md:block">
+    <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      {/* Header - Desktop only */}
+      <div className="border-b border-border px-3 md:px-4 py-2 md:py-3 bg-background/80 backdrop-blur-sm hidden md:block shrink-0">
         <div className="max-w-3xl mx-auto flex items-center gap-2">
           <span className="text-lg">{currentProgram?.icon || "📚"}</span>
           <div>
@@ -47,8 +47,8 @@ export function ChatArea({ session, programs, isStreaming, onSend, onSelectProgr
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Messages - scrollable area */}
+      <div className="flex-1 overflow-y-auto overscroll-contain">
         {visibleMessages.length === 0 && !showSuggestions && (
           <div className="flex items-center justify-center h-full text-muted-foreground text-sm px-4">
             Start your conversation below 👇
@@ -85,8 +85,8 @@ export function ChatArea({ session, programs, isStreaming, onSend, onSelectProgr
         <div ref={bottomRef} />
       </div>
 
-      {/* Input - Positioned at bottom with safe area padding for mobile */}
-      <div className="border-t border-border bg-background px-2 md:px-4 py-3 md:py-4 safe-area-inset-bottom">
+      {/* Input - fixed at bottom, respects safe area */}
+      <div className="border-t border-border bg-background px-2 md:px-4 py-2 md:py-3 shrink-0 pb-[env(safe-area-inset-bottom,8px)]">
         <ChatInput
           onSend={onSend}
           disabled={isStreaming}

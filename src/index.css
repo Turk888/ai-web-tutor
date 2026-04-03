@@ -119,9 +119,16 @@
     @apply border-border;
   }
 
-  body {
+  html, body, #root {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: var(--font-sans);
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    /* Use dvh for mobile browsers that hide/show address bar */
+    height: 100dvh;
   }
 
   code, pre {
